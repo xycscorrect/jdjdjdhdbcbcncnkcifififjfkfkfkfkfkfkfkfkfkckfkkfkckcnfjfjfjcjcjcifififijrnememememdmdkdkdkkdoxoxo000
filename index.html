@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XyCs App - Perisai</title>
+    <title>XyCs App - Member</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Marked.js -->
@@ -128,6 +128,9 @@
                 <button onclick="nav('bot-code')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-700 transition nav-item" id="nav-bot-code">
                     <img class="logo-bot-code circle-logo w-6 h-6 border border-gray-600"> Bot Code
                 </button>
+<button onclick="nav('bot-detect')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-700 transition nav-item" id="nav-bot-detect">
+                    <img class="logo-bot-detect circle-logo w-6 h-6 border border-gray-600"> Detector AI
+                </button>
                 <button onclick="nav('bot-otak')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-700 transition nav-item" id="nav-bot-otak">
                     <img class="logo-bot-otak circle-logo w-6 h-6 border border-gray-600"> Bot Teks
                 </button>
@@ -142,6 +145,9 @@
                     </button>
                     <button onclick="nav('admin')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left hover:bg-gray-700 transition text-red-400 nav-item" id="nav-admin">
                         <i class="fas fa-cogs w-5 text-center"></i> Setelan Aplikasi
+                    </button>
+                    <button onclick="nav('admin-roles')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left hover:bg-gray-700 transition text-sky-400 nav-item" id="nav-admin-roles">
+                        <i class="fas fa-users-cog w-5 text-center"></i> Role Mgmt
                     </button>
                     <button onclick="nav('logs')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left hover:bg-gray-700 transition text-yellow-400 nav-item" id="nav-logs">
                         <i class="fas fa-list w-5 text-center"></i> Users & Logs
@@ -167,7 +173,7 @@
             <div class="h-14 border-b border-gray-800 bg-gray-900 flex flex-shrink-0 items-center px-4 justify-between shadow-md">
                 <div class="flex items-center gap-3">
                     <button class="md:hidden text-gray-400 hover:text-white p-2 -ml-2 rounded-lg" onclick="toggleSidebar()"><i class="fas fa-bars text-xl"></i></button>
-                    <img id="header-logo" class="logo-main circle-logo w-8 h-8" src="">
+                    <img id="header-logo" class="logo-main circle-logo w-8 h-8 cursor-pointer" src="" onclick="previewImage(this.src)">
                     <h2 class="font-bold text-lg truncate min-w-0" id="header-title">Global Chat</h2>
                 </div>
                 <div id="header-actions"></div>
@@ -179,7 +185,7 @@
                 <div class="p-3 border-t border-gray-800 bg-gray-900 flex shrink-0 items-end gap-2">
                     <input type="file" id="global-file" class="hidden" accept="image/png, image/jpeg, image/webp, image/gif" onchange="uploadImage(this, 'global')">
                     <button onclick="document.getElementById('global-file').click()" class="p-3 text-gray-400 hover:text-white bg-gray-800 rounded-lg transition shrink-0"><i class="fas fa-image"></i></button>
-                    <textarea id="global-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Ketik pesan atau tag bot (@BotXyCs)..." oninput="autoExpand(this)"></textarea>
+                    <textarea id="global-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Ketik pesan atau tag bot (@BotXyCs)..." oninput="autoExpand(this); handleInputForMention(event)"></textarea>
                     <button onclick="sendMsg('global')" class="bg-sky-600 hover:bg-sky-500 text-white p-3 px-5 rounded-lg transition shrink-0 font-bold"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -198,14 +204,14 @@
             <!-- View: PM Chatting -->
             <div id="view-pm-chat" class="view-panel flex-1 flex flex-col hidden h-[calc(100%-3.5rem)]">
                 <div class="h-12 border-b border-gray-800 bg-gray-900 flex items-center px-4 gap-3 shrink-0 cursor-pointer hover:bg-gray-800" onclick="openProfile(currentPMUser)">
-                    <img id="pm-chat-photo" class="circle-logo w-8 h-8">
+                    <img id="pm-chat-photo" class="circle-logo w-8 h-8 cursor-pointer" onclick="event.stopPropagation(); previewImage(this.src)">
                     <div class="font-bold flex-1" id="pm-chat-name">User Name</div>
                 </div>
                 <div id="pm-msg-container" class="flex-1 overflow-y-auto p-4 custom-scroll space-y-4"></div>
                 <div class="p-3 border-t border-gray-800 bg-gray-900 flex shrink-0 items-end gap-2">
                     <input type="file" id="pm-file" class="hidden" accept="image/png, image/jpeg, image/webp, image/gif" onchange="uploadImage(this, 'pm')">
                     <button onclick="document.getElementById('pm-file').click()" class="p-3 text-gray-400 hover:text-white bg-gray-800 rounded-lg transition shrink-0"><i class="fas fa-image"></i></button>
-                    <textarea id="pm-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Pesan private..." oninput="autoExpand(this)"></textarea>
+                    <textarea id="pm-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Pesan private..." oninput="autoExpand(this); handleInputForMention(event)"></textarea>
                     <button onclick="sendMsg('pm')" class="bg-green-600 hover:bg-green-500 text-white p-3 px-5 rounded-lg transition shrink-0 font-bold"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -216,7 +222,7 @@
                 <div class="p-3 border-t border-gray-800 bg-gray-900 flex shrink-0 items-end gap-2">
                     <input type="file" id="bot-file" class="hidden" accept="image/*" onchange="uploadImage(this, 'bot')">
     <button onclick="document.getElementById('bot-file').click()" class="p-3 text-gray-400 hover:text-white bg-gray-800 rounded-lg transition shrink-0"><i class="fas fa-image"></i></button>
-    <textarea id="bot-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Tanya bot..." oninput="autoExpand(this)"></textarea>
+    <textarea id="bot-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Tanya bot..." oninput="autoExpand(this); handleInputForMention(event)"></textarea>
                     <button onclick="sendBotPrivate()" class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 px-5 rounded-lg transition shrink-0 font-bold"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -289,7 +295,7 @@
                     </div>
                 </div>
                 <div class="p-3 border-t border-gray-800 bg-gray-900 flex shrink-0 items-end gap-2">
-                    <textarea id="aipro-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Ask AI Pro (Coding, Brainstorm, dll)..." oninput="autoExpand(this)"></textarea>
+                    <textarea id="aipro-input" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 custom-scroll resize-none max-h-32 min-h-[48px]" placeholder="Ask AI Pro (Coding, Brainstorm, dll)..." oninput="autoExpand(this); handleInputForMention(event)"></textarea>
                     <button onclick="sendAiPro()" class="bg-orange-600 hover:bg-orange-500 text-white p-3 px-5 rounded-lg transition shrink-0 font-bold"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -304,6 +310,33 @@
             <div id="view-admin-ask" class="view-panel flex-1 overflow-y-auto custom-scroll p-6 hidden">
                 <h2 class="text-xl font-bold mb-4 text-red-400 border-b border-gray-800 pb-2">User Questions</h2>
                 <div id="admin-ask-list" class="space-y-4"></div>
+            </div>
+            
+            <!-- View: Admin Roles -->
+            <div id="view-admin-roles" class="view-panel flex-1 overflow-y-auto custom-scroll p-6 hidden">
+                <h2 class="text-xl font-bold mb-4 text-sky-400 border-b border-gray-800 pb-2">Manajemen Role Tambahan</h2>
+                
+                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 mb-6">
+                    <h3 class="font-bold text-white mb-3">Buat/Edit Role</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="role-name-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-sky-500" placeholder="Nama Role">
+                        <input type="text" id="role-icon-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-sky-500" placeholder="Icon (Emoji)">
+                        <input type="text" id="role-color-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-sky-500" placeholder="Color Class (ex: text-green-400)">
+                        <input type="text" id="role-perms-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-sky-500" placeholder="Permissions, pisah koma">
+                    </div>
+                    <button onclick="saveNewRole()" class="mt-4 font-bold bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded transition w-full">Simpan / Tambah Role</button>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg overflow-x-auto border border-gray-700 max-w-full">
+                    <table class="w-full text-left text-sm min-w-[600px]">
+                        <thead class="bg-gray-900">
+                            <tr>
+                                <th class="p-3">Nama Role</th><th class="p-3">Icon</th><th class="p-3">Class Warna</th><th class="p-3">Perms</th><th class="p-3">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roles-tbody" class="divide-y divide-gray-700"></tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- View: Admin Logos -->
@@ -334,7 +367,9 @@
 
         <div class="mb-6 bg-gray-900 border border-gray-700 p-4 rounded">
             <label class="block text-sm text-gray-400 mb-2 font-bold">Target Username:</label>
-            <input type="text" id="dev-target-user" class="w-full bg-black border border-gray-600 rounded p-2 text-white mb-4 outline-none focus:border-purple-500" placeholder="Masukkan username target...">
+            <input type="text" id="dev-target-user" class="w-full bg-black border border-gray-600 rounded p-2 text-white mb-2 outline-none focus:border-purple-500" placeholder="Masukkan username target...">
+            <label class="block text-sm text-gray-400 mb-2 font-bold">Nilai Baru (Untuk Reset PW / Ubah Uname):</label>
+            <input type="text" id="dev-target-value" class="w-full bg-black border border-gray-600 rounded p-2 text-white mb-4 outline-none focus:border-purple-500" placeholder="Masukkan password/username baru...">
             
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="devAction('inviteAdmin')" class="bg-blue-600 hover:bg-blue-500 rounded p-2 text-sm font-bold text-white">Invite Admin</button>
@@ -364,6 +399,26 @@
                 <label class="flex items-center gap-3 text-white cursor-pointer hover:text-gray-300">
                     <input type="checkbox" id="toggle-bot-otak" onchange="toggleAi('bot-otak')" class="w-5 h-5 accent-purple-500">
                     Bot Teks (AI Chat)
+                </label>
+                <label class="flex items-center gap-3 text-white cursor-pointer hover:text-gray-300">
+                    <input type="checkbox" id="toggle-ai-gen-cs" onchange="toggleAi('ai-gen-cs')" class="w-5 h-5 accent-purple-500">
+                    Generate CS (AI Story)
+                </label>
+                <label class="flex items-center gap-3 text-white cursor-pointer hover:text-gray-300">
+                    <input type="checkbox" id="toggle-ai-correct-cs" onchange="toggleAi('ai-correct-cs')" class="w-5 h-5 accent-purple-500">
+                    Correct CS (AI Koreksi)
+                </label>
+                <label class="flex items-center gap-3 text-white cursor-pointer hover:text-gray-300">
+                    <input type="checkbox" id="toggle-bot-detect" onchange="toggleAi('bot-detect')" class="w-5 h-5 accent-purple-500">
+                    Deteksi Human/AI (CS Detect)
+                </label>
+                <label class="flex items-center gap-3 text-white cursor-pointer hover:text-gray-300">
+                    <input type="checkbox" id="toggle-bot-xycs" onchange="toggleAi('bot-xycs')" class="w-5 h-5 accent-purple-500">
+                    BotXyCs (Global & PM)
+                </label>
+                <label class="flex items-center gap-3 text-white cursor-pointer hover:text-gray-300">
+                    <input type="checkbox" id="toggle-ai-pro" onchange="toggleAi('ai-pro')" class="w-5 h-5 accent-purple-500">
+                    AI Pro Panel
                 </label>
                 <p class="text-xs text-yellow-400 mt-2">Centang untuk MENGAKTIFKAN, Hilangkan centang untuk MEMATIKAN bot.</p>
             </div>
@@ -401,16 +456,26 @@
             <div class="px-6 pb-6 relative">
                 <div class="flex justify-between items-end -mt-12 mb-4">
                     <div class="relative group">
-                        <img id="prof-photo" class="circle-logo w-24 h-24 border-4 border-gray-800 bg-gray-900">
+                        <img id="prof-photo" class="circle-logo w-24 h-24 border-4 border-gray-800 bg-gray-900 cursor-pointer" onclick="previewImage(this.src)">
                         <div id="prof-edit-overlay" class="hidden absolute inset-0 bg-black/50 rounded-full flex items-center justify-center cursor-pointer border-4 border-transparent" onclick="document.getElementById('prof-img-input').click()">
                             <i class="fas fa-camera text-white text-xl"></i>
                         </div>
                         <input type="file" id="prof-img-input" class="hidden" accept="image/*" onchange="uploadImage(this, 'profile')">
                     </div>
                 </div>
-                <h2 class="text-2xl font-bold text-white flex items-center gap-2"><span id="prof-name">Name</span>
-    <input type="text" id="prof-name-input" class="hidden bg-gray-900 border border-gray-600 rounded p-1 text-sm text-white w-24">
-    <input type="password" id="prof-pass-input" class="hidden bg-gray-900 border border-gray-600 rounded p-1 text-sm text-white w-24 mt-1" placeholder="New PW"> <span id="prof-role-badge" class="px-2 py-0.5 text-xs rounded border border-gray-500">Role</span></h2>
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2"><span id="prof-name">Name</span> <span id="prof-role-badge" class="px-2 py-0.5 text-xs rounded border border-gray-500">Role</span></h2>
+    <div id="prof-edit-fields" class="hidden flex flex-col gap-2 mt-3 mb-2 p-3 bg-gray-800 rounded-lg border border-gray-700">
+        <label class="text-xs text-gray-400 font-bold uppercase">Ubah Username</label>
+        <input type="text" id="prof-name-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-sm text-white w-full" placeholder="Username Baru">
+        
+        <label class="text-xs text-gray-400 font-bold uppercase mt-1">Ubah Password</label>
+        <input type="password" id="prof-pass-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-sm text-white w-full" placeholder="Isi jika ingin ganti password...">
+        
+        <div id="prof-role-container" class="hidden mt-1">
+            <label class="text-xs text-gray-400 font-bold uppercase">Ubah Role (Khusus Admin/Dev)</label>
+            <select id="prof-role-input" class="bg-gray-900 border border-gray-600 rounded p-2 text-sm text-white w-full mt-1"></select>
+        </div>
+    </div>
                 
                 <div class="mt-4">
                     <label class="text-xs text-gray-400 uppercase font-bold tracking-wider">Deskripsi/Status</label>
@@ -447,6 +512,19 @@
         </div>
     </div>
 
+    <!-- Edit Role Modal -->
+    <div id="modal-change-role" class="hidden fixed inset-0 z-[60] bg-black/70 flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-xl p-5 w-full max-w-sm border border-gray-600">
+            <h3 class="font-bold text-lg mb-3">Ubah Role User</h3>
+            <p class="text-sm text-gray-400 mb-2">Username: <span id="change-role-uname" class="font-bold text-white"></span></p>
+            <select id="change-role-select" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white outline-none focus:border-sky-500 mb-4"></select>
+            <div class="flex justify-end gap-2">
+                <button class="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition" onclick="closeChangeRoleModal()">Batal</button>
+                <button class="px-4 py-2 rounded bg-sky-600 hover:bg-sky-500 font-bold transition" onclick="saveChangedRole()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
 <script>
 window.extractImageUrl = function(input) {
     if(!input) return input;
@@ -467,6 +545,7 @@ const DEFAULT_LOGOS = {
     botGx: 'https://ui-avatars.com/api/?name=Gx&background=e11d48&color=fff&size=100',
     botIde: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4a1.png',
     botCode: 'https://ui-avatars.com/api/?name=%3C%3E&background=10b981&color=fff&size=100',
+    botDetect: 'https://ui-avatars.com/api/?name=AI&background=9333ea&color=fff&size=100',
     botOtak: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f9e0.png'
 };
 
@@ -475,15 +554,33 @@ const DB = {
     set: (k, v) => localStorage.setItem('xycs_'+k, JSON.stringify(v))
 };
 
+let defaultRoles = {
+    'Admin': { text: 'Admin', icon: '👑', colorCls: 'text-red-400', badgeCls: 'border-red-500 text-red-400 bg-red-900/20', perms: ['admin'] },
+    'Dev': { text: 'Dev', icon: '🛠️', colorCls: 'text-purple-400', badgeCls: 'border-purple-500 text-purple-400 bg-purple-900/20', perms: ['admin', 'dev'] },
+    'Member': { text: 'Member', icon: '🛡️', colorCls: 'text-sky-400', badgeCls: 'border-sky-500 text-sky-400 bg-sky-900/20', perms: [] }
+};
+let customRoles = DB.get('customRoles', defaultRoles);
+if (customRoles['Perisai']) {
+    customRoles['Member'] = customRoles['Perisai'];
+    customRoles['Member'].text = 'Member';
+    delete customRoles['Perisai'];
+    DB.set('customRoles', customRoles);
+}
+
 function getRoleInfo(roleStr) {
-    let text = roleStr || 'Perisai';
-    let icon = '🛡️';
-    let colorCls = 'text-sky-400';
-    let badgeCls = 'border-sky-500 text-sky-400 bg-sky-900/20';
-    let t = text.toLowerCase();
-    if(t.includes('dev')) { icon = '🛠️'; colorCls = 'text-purple-400'; badgeCls = 'border-purple-500 text-purple-400 bg-purple-900/20'; }
-    else if(t.includes('admin') || t.includes('admin')) { icon = '👑'; colorCls = 'text-red-400'; badgeCls = 'border-red-500 text-red-400 bg-red-900/20'; }
-    return { text, icon, colorCls, badgeCls };
+    let r = roleStr ? roleStr.trim() : 'Member';
+    if(customRoles[r]) return customRoles[r];
+    
+    // Default matching logic if specific custom role not found
+    let def = { text: r, icon: '🛡️', colorCls: 'text-sky-400', badgeCls: 'border-sky-500 text-sky-400 bg-sky-900/20', perms: [] };
+    let t = r.toLowerCase();
+    
+    if(t.includes('dev')) {
+        def = { text: r, icon: '🛠️', colorCls: 'text-purple-400', badgeCls: 'border-purple-500 text-purple-400 bg-purple-900/20', perms: ['admin', 'dev'] };
+    } else if(t.includes('admin')) {
+        def = { text: r, icon: '👑', colorCls: 'text-red-400', badgeCls: 'border-red-500 text-red-400 bg-red-900/20', perms: ['admin'] };
+    }
+    return def;
 }
 
 // Initialize Stores
@@ -495,18 +592,36 @@ if(!DB.get('users', null)){
     });
 }
 let users = DB.get('users', {});
+Object.values(users).forEach(u => {
+    if (u.role === 'Perisai') u.role = 'Member';
+});
 if (!users['XyDev']) {
     users['XyDev'] = { username:'XyDev', password:'XyfurVetelz1', role:'Dev', photo:'', desc:'System Developer', deviceId:'root' };
     DB.set('users', users);
 
 }
 let settings = DB.get('settings', { logos: DEFAULT_LOGOS, bgUrl: '', rules: 'Patuhi semua peraturan roleplay.', infoWeb: 'Info App Default.' });
+if(settings.logos && !settings.logos.botDetect) {
+    settings.logos.botDetect = DEFAULT_LOGOS.botDetect;
+    DB.set('settings', settings);
+}
 let globalChat = DB.get('global', []);
 let pms = DB.get('pms', {});
 let csList = DB.get('cs', []);
 let askList = DB.get('asks', []);
-let botChats = DB.get('botChats', {});
-let aiproChat = DB.get('aipro', []);
+
+if (!DB.get('wiped_public_bots_v2')) {
+    DB.set('botSessions', {});
+    DB.set('botChats', {});
+    DB.set('aipro', {});
+    DB.set('wiped_public_bots_v2', true);
+}
+
+let botChats = {};
+DB.set('botChats', botChats);
+let aiproChat = DB.get('aipro', {});
+if(Array.isArray(aiproChat)) aiproChat = {};
+DB.set('aipro', aiproChat);
 // Clean up bad URLs in DB
 globalChat.forEach(m => { if(m.img) m.img = extractImageUrl(m.img); });
 DB.set('global', globalChat);
@@ -597,7 +712,7 @@ window.onload = () => {
                 return showAuthErr("1 Device/IP hanya bisa register 1 kali!");
             }
             // Auto assign role based on username logic or default
-            const role = (u.toLowerCase() === 'admin' || u.toLowerCase() === 'xycs') ? 'Admin' : 'Perisai';
+            const role = (u.toLowerCase() === 'admin' || u.toLowerCase() === 'xycs') ? 'Admin' : 'Member';
             users[u] = { username: u, password: p, role, deviceId: bid, photo: '', desc: 'Halo, saya di XyCs!' };
             DB.set('users', users);
             setRegisterMode(false);
@@ -633,7 +748,8 @@ function applyLogos() {
     document.querySelectorAll('.logo-bot-game').forEach(e => e.src = settings.logos.botGx);
     document.querySelectorAll('.logo-bot-ide').forEach(e => e.src = settings.logos.botIde);
     document.querySelectorAll('.logo-bot-code').forEach(e => e.src = settings.logos.botCode);
-    document.querySelectorAll('.logo-bot-otak').forEach(e => e.src = settings.logos.botOtak);
+        document.querySelectorAll('.logo-bot-otak').forEach(e => e.src = settings.logos.botOtak);
+    document.querySelectorAll('.logo-bot-detect').forEach(e => e.src = settings.logos.botDetect);
 }
 
 let isRegistering = false;
@@ -669,6 +785,26 @@ function logout() {
      APP NAVIGATION & UI
 ======================== */
 function initApp() {
+
+    // Wipe old fake AI messages from local storage silently on first load
+    Object.keys(botSessions).forEach(k => {
+        botSessions[k].forEach(s => {
+            s.messages = s.messages.filter(m => !m.text.includes('Ini adalah respon simulasi markdown yang **lengkap dan detail**'));
+        });
+    });
+    DB.set('botSessions', botSessions);
+
+    // Pastikan BotXyCs ada sehingga bisa login
+    if(!users['BotXyCs']) {
+        users['BotXyCs'] = {
+            username: 'BotXyCs', password: 'bot',
+            role: 'Dev', photo: 'https://ui-avatars.com/api/?name=XyCs&background=9333ea&color=fff',
+            deviceId: 'BOT_ID_000', theme: 'default',
+            desc: 'Sistem AI Resmi XyCs. Tanya saya apapun!'
+        };
+        DB.set('users', users);
+    }
+
     document.getElementById('nav-username').innerText = currentUser.username;
     let r = getRoleInfo(currentUser.role);
     document.getElementById('nav-role').innerText = r.icon + ' ' + r.text;
@@ -676,8 +812,25 @@ function initApp() {
     document.getElementById('nav-user-photo').src = currentUser.photo || `https://ui-avatars.com/api/?name=${currentUser.username}&background=random`;
     
     let roleLower = currentUser.role.toLowerCase();
+    
+    // Admin section logic (Role Mgmt, etc.)
     if(roleLower.includes('admin') || roleLower.includes('dev')) {
         document.getElementById('nav-admin-section').classList.remove('hidden');
+        document.getElementById('nav-admin-roles').classList.remove('hidden'); // allow admin
+    } else {
+        document.getElementById('nav-admin-section').classList.add('hidden');
+    }
+    
+    // User & Logs -> ONLY Dev
+    if(roleLower.includes('dev')) {
+        let logsLink = document.getElementById('nav-logs');
+        if(logsLink) logsLink.classList.remove('hidden');
+        document.getElementById('nav-devs').classList.remove('hidden');
+    } else {
+        let logsLink = document.getElementById('nav-logs');
+        if(logsLink) logsLink.classList.add('hidden');
+        let devsLink = document.getElementById('nav-devs');
+        if(devsLink) devsLink.classList.add('hidden');
     }
     if(roleLower.includes('dev')) { // Show dev menu
         setTimeout(()=> document.getElementById('nav-devs')?.classList.remove('hidden'), 100);
@@ -736,6 +889,9 @@ function nav(to) {
     } else if (to === 'pm') {
         document.getElementById('view-pm').classList.remove('hidden');
         title = "Private Message"; renderPMList();
+    } else if (to === 'admin-roles') {
+        document.getElementById('view-admin-roles').classList.remove('hidden');
+        title = "Role Management"; renderRolesAdmin();
     } else if (to === 'admin') {
         document.getElementById('view-admin').classList.remove('hidden');
         title = "Admin: Setelan Logo"; renderAdminLogos();
@@ -749,17 +905,25 @@ function nav(to) {
     } else if (to.startsWith('bot-')) {
         currentBot = to;
         document.getElementById('view-bot').classList.remove('hidden');
-        const bMap = { 'bot-gx': 'Game Bot (Gx)', 'bot-ide': 'IDE Bot', 'bot-code': 'Code Bot', 'bot-otak': 'Bot Teks' };
+        const bMap = { 'bot-gx': 'Game Bot (Gx)', 'bot-ide': 'IDE Bot', 'bot-code': 'Code Bot', 'bot-otak': 'Bot Teks', 'bot-detect': 'Detector AI' };
         title = bMap[to];
         if(to === 'bot-gx') hdrLogoSrc = settings.logos.botGx;
         if(to === 'bot-ide') hdrLogoSrc = settings.logos.botIde;
         if(to === 'bot-code') hdrLogoSrc = settings.logos.botCode;
         if(to === 'bot-otak') hdrLogoSrc = settings.logos.botOtak;
-        DB.set('botChats', botChats); DB.set('botChats', botChats); DB.set('botChats', botChats); DB.set('botChats', botChats); DB.set('botChats', botChats); renderBotChat();
+        if(to === 'bot-detect') hdrLogoSrc = settings.logos.botDetect;
+             renderBotChat();
     }
     document.getElementById('header-title').innerText = title;
     document.getElementById('header-logo').src = hdrLogoSrc;
-    document.getElementById('header-actions').innerHTML = '';
+    
+    let actHtml = '';
+    if(to.startsWith('bot-')) {
+        actHtml = `<button class="text-sky-400 hover:text-white bg-gray-800 p-2 rounded ml-1" onclick="openBotSessionsModal()"><i class="fas fa-history"></i></button>
+                   <button class="text-sky-400 hover:text-white bg-gray-800 p-2 rounded" onclick="newBotChat()"><i class="fas fa-plus"></i></button>`;
+    }
+    document.getElementById('header-actions').innerHTML = actHtml;
+    
 }
 
 /* ======================== 
@@ -784,6 +948,21 @@ function sendMsg(type, extText=null, extImg=null) {
     };
 
     if(type === 'global') {
+        if(text.startsWith('/clear') && (currentUser.role.toLowerCase().includes('admin') || currentUser.role.toLowerCase().includes('dev'))) {
+            let parts = text.split(' ');
+            if (parts.length > 1 && !isNaN(parts[1])) {
+                let n = parseInt(parts[1]);
+                if (n > 0) {
+                     globalChat = globalChat.slice(0, Math.max(0, globalChat.length - n));
+                }
+            } else {
+                globalChat = [];
+            }
+            DB.set('global', globalChat);
+            input.value = ''; input.style.height = '48px';
+            renderGlobal();
+            return;
+        }
         globalChat.push(msg);
         DB.set('global', globalChat);
         input.value = ''; input.style.height = '48px';
@@ -791,23 +970,76 @@ function sendMsg(type, extText=null, extImg=null) {
         
         // Bot Tag Detection
         if(text.includes('@BotXyCs')) {
-            setTimeout(() => {
-                globalChat.push({
-                    id: generateId(), sender: 'BotXyCs', isBot: true,
-                    text: `Halo @${currentUser.username}, Anda mensummon saya! *(Catatan: Tambahkan Integrasi API Gemini Anda di dalam code untuk respon AI asli)*`,
-                    ts: Date.now()
-                });
-                DB.set('global', globalChat);
-                renderGlobal();
-            }, 1000);
+            if(settings.aiDisabled && settings.aiDisabled['bot-xycs']) {
+                alert("Fitur BotXyCs sedang dimatikan oleh Developer.");
+                return;
+            }
+            // Placeholder loading message
+            let botMsgId = generateId();
+            globalChat.push({ id: botMsgId, sender: 'BotXyCs', isBot: false, text: "Memproses...", ts: Date.now() });
+            renderGlobal();
+            
+            setTimeout(async () => {
+                 try {
+                     let prompt = "Sistem: Kamu adalah BotXyCs di chat global. Jawab pertanyaan berikut dari user " + currentUser.username + " secara singkat dan jelas.\nUser: " + text;
+                     let reply = await callGeneralAI(prompt, API_KEYS.botXyCs);
+                     let target = globalChat.find(m => m.id === botMsgId);
+                     if(target) target.text = reply;
+                 } catch(e) {
+                     let target = globalChat.find(m => m.id === botMsgId);
+                     if(target) target.text = "Error BotXyCs: " + e.message;
+                 }
+                 DB.set('global', globalChat);
+                 renderGlobal();
+            }, 100);
         }
     } else if (type === 'pm') {
         const key = [currentUser.username, currentPMUser].sort().join('_');
         if(!pms[key]) pms[key] = [];
+        
+        if(text.startsWith('/clear') && (currentUser.role.toLowerCase().includes('admin') || currentUser.role.toLowerCase().includes('dev'))) {
+            let parts = text.split(' ');
+            if (parts.length > 1 && !isNaN(parts[1])) {
+                let n = parseInt(parts[1]);
+                if (n > 0) pms[key] = pms[key].slice(0, Math.max(0, pms[key].length - n));
+            } else {
+                pms[key] = [];
+            }
+            DB.set('pms', pms);
+            input.value = ''; input.style.height = '48px';
+            renderPMChat();
+            return;
+        }
+
         pms[key].push(msg);
         DB.set('pms', pms);
         input.value = ''; input.style.height = '48px';
         renderPMChat();
+        
+        // Bot Tag Detection in PM
+        if(text.includes('@BotXyCs')) {
+            if(settings.aiDisabled && settings.aiDisabled['bot-xycs']) {
+                alert("Fitur BotXyCs sedang dimatikan oleh Developer.");
+                return;
+            }
+            let botMsgId = generateId();
+            pms[key].push({ id: botMsgId, sender: 'BotXyCs', isBot: false, text: "Memproses...", ts: Date.now() });
+            renderPMChat();
+            
+            setTimeout(async () => {
+                 try {
+                     let prompt = "Sistem: Kamu adalah BotXyCs di private chat. Jawab pertanyaan berikut dari user " + currentUser.username + ".\nUser: " + text;
+                     let reply = await callGeneralAI(prompt, API_KEYS.botXyCs);
+                     let target = pms[key].find(m => m.id === botMsgId);
+                     if(target) target.text = reply;
+                 } catch(e) {
+                     let target = pms[key].find(m => m.id === botMsgId);
+                     if(target) target.text = "Error BotXyCs: " + e.message;
+                 }
+                 DB.set('pms', pms);
+                 renderPMChat();
+            }, 100);
+        }
     }
 }
 
@@ -826,7 +1058,7 @@ function renderHtmlMsg(m, listType, listKey='') {
         photo = senderData?.photo || `https://ui-avatars.com/api/?name=${m.sender}&background=random`;
     }
 
-    let roleStr = m.isBot ? 'Bot' : (senderData?.role || 'Perisai');
+    let roleStr = m.isBot ? 'Bot' : (senderData?.role || 'Member');
     let r = getRoleInfo(roleStr);
     let roleHtml = m.isBot ? `<span class="text-[10px] uppercase font-bold tracking-wider text-green-400">🤖 BOT</span>` 
                    : `<span class="text-[10px] uppercase font-bold tracking-wider ${r.colorCls}">${r.icon} ${r.text}</span>`;
@@ -837,16 +1069,16 @@ function renderHtmlMsg(m, listType, listKey='') {
     let content = m.text ? `<div class="markdown-body mt-1 select-text">${renderMd(m.text)}</div>` : '';
     let imgBlock = m.img ? `<img src="${m.img}" class="mt-2 rounded-lg max-h-64 cursor-pointer hover:opacity-90 max-w-full" onclick="window.previewImage(this.src)">` : '';
     
-    let actions = `<div class="opacity-0 group-hover:opacity-100 transition absolute top-2 right-2 flex gap-1 bg-gray-800 p-1 rounded shadow">
+    let actions = `<div id="msg-act-${m.id}" class="hidden absolute top-2 right-2 flex gap-1 bg-gray-800 p-1 rounded shadow border border-gray-700 z-10" onclick="event.stopPropagation()">
     <button onclick="bookmarkMsg('${m.id}', '${listType}', '${listKey}')" class="text-gray-400 hover:text-yellow-400 p-1"><i class="fas fa-bookmark ${m.bookmarked ? 'text-yellow-400' : ''}"></i></button>`;
     if(canEdit) actions += `<button onclick="startEdit('${m.id}', '${listType}', '${listKey}')" class="text-gray-400 hover:text-sky-400 p-1"><i class="fas fa-edit"></i></button>`;
     if(canDel) actions += `<button onclick="delMsg('${m.id}', '${listType}', '${listKey}')" class="text-gray-400 hover:text-red-400 p-1"><i class="fas fa-trash"></i></button>`;
     actions += `</div>`;
 
     return `
-    <div class="flex gap-3 group relative msg-bubble ${r.text.toLowerCase().includes('admin')?'bg-red-900/10 p-2 rounded -mx-2':''}">
+    <div class="flex gap-3 relative msg-bubble ${r.text.toLowerCase().includes('admin')?'bg-red-900/10 p-2 rounded -mx-2':''}">
         <img src="${photo}" class="w-10 h-10 circle-logo shrink-0 cursor-pointer" onclick="openProfile('${m.sender}')">
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 cursor-pointer" onclick="toggleMsgAction('${m.id}')">
             <div class="flex items-baseline gap-2">
                 <span class="font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${m.sender}')">${m.sender}</span>
                 ${roleHtml}
@@ -916,10 +1148,123 @@ function renderPMChat() {
 
 // Bot Chat Simulate
 // let botChats removed here
+
+let botSessions = DB.get('botSessions', {});
+if(botSessions['bot-gx'] && Array.isArray(botSessions['bot-gx'])) { // old structure detected
+    botSessions = {};
+    DB.set('botSessions', botSessions);
+}
+
+
+// Migration & Intialization
+function ensureBotSession() {
+    if(!botSessions[getBotSessionKey()]) botSessions[getBotSessionKey()] = [];
+    
+    // Migrate old flat botChats
+    if(botChats[getBotSessionKey()] && botChats[getBotSessionKey()].length > 0) {
+        botSessions[getBotSessionKey()].push({
+            id: 'sess_' + Date.now(),
+            title: 'Riwayat Lama',
+            ts: Date.now(),
+            messages: [...botChats[getBotSessionKey()]]
+        });
+        botChats[getBotSessionKey()] = []; // clear old so we don't migrate again
+        DB.set('botChats', botChats);
+    }
+    
+    if(botSessions[getBotSessionKey()].length === 0) {
+        botSessions[getBotSessionKey()].push({
+            id: 'sess_' + Date.now(),
+            title: 'Chat Baru',
+            ts: Date.now(),
+            messages: []
+        });
+    }
+    DB.set('botSessions', botSessions);
+}
+
+function getBotSessionKey() { return (currentUser ? currentUser.username : 'GUEST') + '_' + currentBot; }
+let activeBotSessionId = null;
+
+window.newBotChat = function() {
+    ensureBotSession();
+    let nid = 'sess_' + Date.now();
+    botSessions[getBotSessionKey()].push({
+        id: nid,
+        title: 'Chat Baru ' + new Date().toLocaleTimeString(),
+        ts: Date.now(),
+        messages: []
+    });
+    DB.set('botSessions', botSessions);
+    activeBotSessionId = nid;
+    renderBotChat();
+}
+
+window.openBotSessionsModal = function() {
+    ensureBotSession();
+    let list = botSessions[getBotSessionKey()].sort((a,b) => b.ts - a.ts);
+    let html = list.map(s => `
+        <div class="flex items-center justify-between bg-gray-900 border border-gray-700 p-3 rounded-lg mb-2">
+            <div class="flex-1 cursor-pointer" onclick="switchBotSession('${s.id}')">
+                <div class="font-bold text-white ${s.id === activeBotSessionId ? 'text-sky-400' : ''}">${s.title}</div>
+                <div class="text-xs text-gray-500">${new Date(s.ts).toLocaleString()} • ${s.messages.length} msg</div>
+            </div>
+            <button class="text-red-400 p-2 hover:bg-gray-800 rounded" onclick="deleteBotSession('${s.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+    `).join('');
+    
+    document.getElementById('bot-history-list').innerHTML = html;
+    document.getElementById('modal-bot-history').classList.remove('hidden');
+}
+
+window.closeBotSessionsModal = function() {
+    document.getElementById('modal-bot-history').classList.add('hidden');
+}
+
+window.switchBotSession = function(id) {
+    activeBotSessionId = id;
+    renderBotChat();
+    closeBotSessionsModal();
+}
+
+window.deleteBotSession = function(id) {
+    botSessions[getBotSessionKey()] = botSessions[getBotSessionKey()].filter(s => s.id !== id);
+    if(botSessions[getBotSessionKey()].length === 0) newBotChat(); // ensure 1 exists
+    else if (activeBotSessionId === id) activeBotSessionId = botSessions[getBotSessionKey()][0].id;
+    DB.set('botSessions', botSessions);
+    openBotSessionsModal(); // re-render
+    renderBotChat();
+}
+
+// Rewriting renderBotChat to use session
 function renderBotChat() {
-    if(!botChats[currentBot]) botChats[currentBot] = [];
+    ensureBotSession();
+    if(!activeBotSessionId || !botSessions[getBotSessionKey()].find(s=>s.id === activeBotSessionId)) {
+        activeBotSessionId = botSessions[getBotSessionKey()][0].id; // Fallback to first
+    }
+    
+    let sess = botSessions[getBotSessionKey()].find(s => s.id === activeBotSessionId);
+    let msgs = sess ? sess.messages : [];
+    
     const c = document.getElementById('bot-msg-container');
-    let bc = [...botChats[currentBot]].sort((a,b) => (b.bookmarked?1:0) - (a.bookmarked?1:0));
+    let bc = [...msgs].sort((a,b) => (b.bookmarked?1:0) - (a.bookmarked?1:0));
+    c.innerHTML = bc.map(m => renderHtmlMsg(m, 'bot')).join('');
+    c.scrollTop = c.scrollHeight;
+    
+    // Auto title update if unnamed
+    if(msgs.length > 0 && sess.title.startsWith('Chat Baru ')) {
+        // Find first user message
+        let firstUser = msgs.find(m => !m.isBot);
+        if(firstUser) sess.title = firstUser.text.substring(0, 30) + '...';
+        DB.set('botSessions', botSessions);
+    }
+}
+
+// old function overwritten below
+function dummy() {
+    if(!botChats[getBotSessionKey()]) botChats[getBotSessionKey()] = [];
+    const c = document.getElementById('bot-msg-container');
+    let bc = [...botChats[getBotSessionKey()]].sort((a,b) => (b.bookmarked?1:0) - (a.bookmarked?1:0));
     c.innerHTML = bc.map(m => renderHtmlMsg(m, 'bot')).join('');
     c.scrollTop = c.scrollHeight;
 }
@@ -944,67 +1289,140 @@ function sendBotPrivate() {
         return;
     }
 
-    botChats[currentBot].push({ id: generateId(), sender: currentUser.username, text, img: window.tempBotImg, ts: Date.now() });
+    if(text.startsWith('/clear')) {
+        let parts = text.split(' ');
+        let sess = botSessions[getBotSessionKey()].find(s => s.id === activeBotSessionId);
+        if (parts.length > 1 && !isNaN(parts[1])) {
+            let n = parseInt(parts[1]);
+            if (n > 0) sess.messages = sess.messages.slice(0, Math.max(0, sess.messages.length - n));
+        } else {
+            sess.messages = [];
+        }
+        DB.set('botSessions', botSessions);
+        inp.value = ''; inp.style.height = '48px';
+        renderBotChat();
+        return;
+    }
+
+        let sess = botSessions[getBotSessionKey()].find(s => s.id === activeBotSessionId);
+    sess.messages.push({ id: generateId(), sender: currentUser.username, text, img: window.tempBotImg, ts: Date.now() });
+    sess.ts = Date.now();
+    DB.set('botSessions', botSessions);
     let usedImg = window.tempBotImg;
     window.tempBotImg = null;
-    inp.value=''; inp.style.height='48px'; renderBotChat();
+    inp.value=''; inp.style.height='48px'; 
+    renderBotChat();
     
-    setTimeout(() => {
-        const bMap = { 'bot-gx': 'Game Bot (Gx)', 'bot-ide': 'IDE Bot', 'bot-code': 'Code Bot', 'bot-otak': 'Bot Teks' };
-        botChats[currentBot].push({
-            id: generateId(), sender: currentBot, isBot: true,
-            img: usedImg, text: `Halo ${currentUser.username}! Saya adalah **${bMap[currentBot] || 'Bot AI'}**.\n\nIni adalah respon simulasi markdown yang **lengkap dan detail**. Jika disambungkan ke Gemini atau model AI lainnya, saya akan bisa:\n- 🚀 Menjawab pertanyaan kompleks secara runut\n- 📝 Menulis, mengoreksi, serta me-refactor kode\n- 🛠️ Debugging script dan teks (Correct CS)\n\n\`\`\`javascript\n// Inisialisasi engine ${bMap[currentBot]}\nconst ai = await loadXyCsEngine("${currentBot}");\nai.start();\n\`\`\``,
-            ts: Date.now()
-        });
+    // Create typing indicator placeholder
+    let sess2 = botSessions[getBotSessionKey()].find(s => s.id === activeBotSessionId);
+    let tempBotId = generateId();
+    sess2.messages.push({
+        id: tempBotId, sender: currentBot, isBot: true,
+        text: "...", ts: Date.now()
+    });
+    DB.set('botSessions', botSessions);
+    renderBotChat();
+
+    setTimeout(async () => {
+        const bMap = { 'bot-gx': 'Game Bot (Gx)', 'bot-ide': 'IDE Bot', 'bot-code': 'Code Bot', 'bot-otak': 'Bot Teks', 'bot-detect': 'Detector AI' };
+        
+        let apiKey;
+        let extPrompt = "";
+        if(currentBot === 'bot-gx') { apiKey = API_KEYS.botGx; extPrompt = "Kamu adalah Bot Game (Gx)."; }
+        else if(currentBot === 'bot-ide') { apiKey = API_KEYS.botIde; extPrompt = "Kamu adalah Bot IDE. Bantu user seputar koding."; }
+        else if(currentBot === 'bot-code') { apiKey = API_KEYS.botCode; extPrompt = "Kamu adalah Code Bot."; }
+        else if(currentBot === 'bot-otak') { apiKey = API_KEYS.botTeks; extPrompt = "Kamu adalah Bot Teks."; }
+        else if(currentBot === 'bot-detect') { apiKey = API_KEYS.detector; extPrompt = "Kamu adalah AI Detector. Analisa apakah input adalah AI atau manusia."; }
+        else { apiKey = API_KEYS.aiPro; }
+
+
+        let sess3 = botSessions[getBotSessionKey()].find(s => s.id === activeBotSessionId);
+        let conversationHistory = [...sess3.messages];
+        // remove the "..." message for history context
+        conversationHistory = conversationHistory.filter(m => m.id !== tempBotId);
+        
+        // build simple text history (limit to last 10 messages)
+        let hist = conversationHistory.slice(-10).map(m => (m.isBot ? "Bot: " : "User: ") + (m.img ? "[IMAGE]" : "") + m.text).join("\n");
+
+        let prompt = "Sistem: " + extPrompt + "\nRiwayat Chat:\n" + hist + "\n\nBeri respon selanjutnya (Bot):";
+
+        try {
+            let reply = await callGeneralAI(prompt, apiKey);
+            let target = sess3.messages.find(m => m.id === tempBotId);
+            if(target) target.text = reply;
+            sess3.ts = Date.now();
+            DB.set('botSessions', botSessions);
+        } catch(e) {
+            let target = sess3.messages.find(m => m.id === tempBotId);
+            if(target) target.text = "Error menghubungkan ke AI: " + e.message;
+            DB.set('botSessions', botSessions);
+        }
         renderBotChat();
-    }, 1000);
+    }, 100);
 }
 
-/* ======================== 
-     EDIT & DELETE MSGS
-======================== */
+// Ensure global functions
 window.bookmarkMsg = function(id, type, key='') {
-        let items = type === 'global' ? globalChat : (type === 'bot' ? botChats[currentBot] : pms[key]);
-        let m = items.find(x => x.id === id);
-        if(m) { m.bookmarked = !m.bookmarked; }
-        if(type === 'global') { DB.set('global', globalChat); renderGlobal(); }
-        else if(type === 'bot') { DB.set('botChats', botChats); renderBotChat(); }
-        else { DB.set('pms', pms); renderPMChat(); }
-    };
-    function delMsg(id, type, key='') {
-    if(!confirm("Hapus pesan ini?")) return;
+    let items = type === 'global' ? globalChat : (type === 'bot' ? botSessions[getBotSessionKey()].find(s=>s.id===activeBotSessionId).messages : pms[key]);
+    let m = items.find(x => x.id === id);
+    if(m) { m.bookmarked = !m.bookmarked; }
+    if(type === 'global') { DB.set('global', globalChat); renderGlobal(); }
+    else if(type === 'bot') { DB.set('botSessions', botSessions); renderBotChat(); }
+    else { DB.set('pms', pms); renderPMChat(); }
+};
+
+window.toggleMsgAction = function(id) {
+    let act = document.getElementById('msg-act-' + id);
+    if(act) {
+        document.querySelectorAll('div[id^="msg-act-"]').forEach(el => {
+            if(el.id !== 'msg-act-' + id) el.classList.add('hidden');
+        });
+        act.classList.toggle('hidden');
+    }
+};
+
+window.delMsg = function(id, type, key='') {
     if(type === 'global') {
         globalChat = globalChat.filter(m => m.id !== id);
         DB.set('global', globalChat); renderGlobal();
     } else if (type === 'bot') {
-        botChats[currentBot] = botChats[currentBot].filter(m => m.id !== id);
-        renderBotChat();
+        let sess = botSessions[getBotSessionKey()].find(s=>s.id===activeBotSessionId);
+        sess.messages = sess.messages.filter(m => m.id !== id);
+        DB.set('botSessions', botSessions); renderBotChat();
     } else if (type === 'pm') {
         pms[key] = pms[key].filter(m => m.id !== id);
         DB.set('pms', pms); renderPMChat();
+    } else if (type === 'aipro') {
+        aiproChat[currentUser.username] = aiproChat[currentUser.username].filter(m => m.id !== id);
+        DB.set('aipro', aiproChat); renderAiPro();
     }
-}
-function startEdit(id, type, key='') {
+};
+
+window.startEdit = function(id, type, key='') {
     editingMsgId = id; editingMsgType = {type, key};
-    let arr = type === 'global' ? globalChat : (type === 'bot' ? botChats[currentBot] : pms[key]);
+    let arr = type === 'global' ? globalChat : (type === 'bot' ? botSessions[getBotSessionKey()].find(s=>s.id===activeBotSessionId).messages : pms[key]);
     let m = arr.find(x => x.id === id);
     if(m) {
         document.getElementById('edit-msg-input').value = m.text;
         document.getElementById('modal-edit-msg').classList.remove('hidden');
     }
-}
-function closeEditModal() { document.getElementById('modal-edit-msg').classList.add('hidden'); }
-function saveEditedMsg() {
+};
+
+window.closeEditModal = function() { document.getElementById('modal-edit-msg').classList.add('hidden'); };
+
+window.saveEditedMsg = function() {
     let newText = document.getElementById('edit-msg-input').value.trim();
     if(!newText) return closeEditModal();
-    let arr = editingMsgType.type === 'global' ? globalChat : (editingMsgType.type === 'bot' ? botChats[currentBot] : pms[editingMsgType.key]);
+    let arr = editingMsgType.type === 'global' ? globalChat : (editingMsgType.type === 'bot' ? botSessions[getBotSessionKey()].find(s=>s.id===activeBotSessionId).messages : pms[editingMsgType.key]);
     let m = arr.find(x => x.id === editingMsgId);
-    if(m) { m.text = newText; m.ts = Date.now(); } // update ts
+    if(m) { m.text = newText; m.ts = Date.now(); }
     if(editingMsgType.type === 'global') { DB.set('global', globalChat); renderGlobal(); }
-    else if(editingMsgType.type === 'bot') { DB.set('botChats', botChats); renderBotChat(); }
+    else if(editingMsgType.type === 'bot') { DB.set('botSessions', botSessions); renderBotChat(); }
     else { DB.set('pms', pms); renderPMChat(); }
     closeEditModal();
-}
+};
+;
+
 
 
 /* ======================== 
@@ -1062,16 +1480,16 @@ function openProfile(uname) {
     
     // Process links in desc
     let desc = viewProfUser.desc || '-';
-    let formattedDesc = desc.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-blue-400 hover:underline hover:text-blue-300">$1</a>');
-    formattedDesc = formattedDesc.replace(/(www\.[^\s]+)/g, '<a href="http://$1" target="_blank" class="text-blue-400 hover:underline hover:text-blue-300">$1</a>');
-    let ioMatches = formattedDesc.match(/([a-zA-Z0-9.-]+\.(com|net|io|org|id|my|xyz))/g);
-    if(ioMatches) {
-        ioMatches.forEach(m => {
-            if(!formattedDesc.includes('href="'+m) && !formattedDesc.includes('href="http')) {
-                // simple replace
-            }
-        });
-    }
+    
+    // simple URL detection to make discord.gg, youtube.com, tiktok.com, IG links clickable
+    const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([^\s]+\.(com|net|org|io|gg|me|id|xyz|ly)[^\s]*)/ig;
+    let formattedDesc = desc.replace(urlRegex, (url) => {
+        let fullUrl = url;
+        if(!url.toLowerCase().startsWith('http')) {
+            fullUrl = 'http://' + url;
+        }
+        return `<a href="${fullUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 underline underline-offset-2 break-all">${url}</a>`;
+    });
     document.getElementById('prof-desc-text').innerHTML = formattedDesc;
     
     // Process profile theme
@@ -1100,10 +1518,16 @@ function openProfile(uname) {
     document.getElementById('prof-desc-text').classList.remove('hidden');
     document.getElementById('prof-desc-input').classList.add('hidden');
 
-    if(isMe) {
+    const canEditProf = isMe || currentUser.role.toLowerCase().includes('dev') || currentUser.role.toLowerCase().includes('admin');
+    
+    document.getElementById('prof-edit-overlay').classList.add('hidden');
+    
+    if(canEditProf) {
         document.getElementById('prof-edit-overlay').classList.remove('hidden');
         actBox.innerHTML += `<button class="flex-1 bg-sky-600 hover:bg-sky-500 shadow-lg py-2 rounded text-sm font-bold transition flex items-center justify-center gap-2" onclick="editProfileMode()"><i class="fas fa-edit"></i> Edit Profil</button>`;
-    } else {
+    } 
+    // Always add PM button if it's NOT me
+    if(!isMe) {
         actBox.innerHTML += `<button class="flex-1 bg-green-600 hover:bg-green-500 shadow-lg py-2 rounded text-sm font-bold transition flex items-center justify-center gap-2" onclick="closeProfile(); openPM('${uname}')"><i class="fas fa-paper-plane"></i> Kirim PM</button>`;
     }
     
@@ -1117,11 +1541,23 @@ function closeProfile() {
 }
 
 function editProfileMode() {
+    const isMe = viewProfUser.username === currentUser.username;
+    const canEditRole = !isMe && (currentUser.role.toLowerCase().includes('dev') || currentUser.role.toLowerCase().includes('admin'));
+    
     document.getElementById('prof-desc-text').classList.add('hidden');
     document.getElementById('prof-name').classList.add('hidden');
+    document.getElementById('prof-role-badge').classList.add('hidden');
+    document.getElementById('prof-edit-fields').classList.remove('hidden');
     document.getElementById('prof-name-input').value = viewProfUser.username;
-    document.getElementById('prof-name-input').classList.remove('hidden');
-    document.getElementById('prof-pass-input').classList.remove('hidden');
+    
+    if(canEditRole) {
+        let sel = document.getElementById('prof-role-input');
+        sel.innerHTML = Object.keys(customRoles).map(k => `<option value="${k}" ${k===viewProfUser.role?'selected':''}>${k}</option>`).join('');
+        document.getElementById('prof-role-container').classList.remove('hidden');
+    } else {
+        document.getElementById('prof-role-container').classList.add('hidden');
+    }
+
     const inp = document.getElementById('prof-desc-input');
     inp.value = viewProfUser.desc;
     inp.classList.remove('hidden');
@@ -1143,6 +1579,11 @@ function saveProfile() {
     let newUname = document.getElementById('prof-name-input').value.trim() || oldUname;
     let newPw = document.getElementById('prof-pass-input').value.trim();
     
+    if(!document.getElementById('prof-role-input').classList.contains('hidden')) {
+        viewProfUser.role = document.getElementById('prof-role-input').value;
+    }
+
+    
     if(newUname !== oldUname) {
         if(users[newUname]) { alert("Username sudah terpakai!"); }
         else {
@@ -1161,8 +1602,10 @@ function saveProfile() {
     if(newPw) viewProfUser.password = newPw;
     
     document.getElementById('prof-name').classList.remove('hidden');
-    document.getElementById('prof-name-input').classList.add('hidden');
-    document.getElementById('prof-pass-input').classList.add('hidden');
+    document.getElementById('prof-role-badge').classList.remove('hidden');
+    document.getElementById('prof-edit-fields').classList.add('hidden');
+    document.getElementById('prof-role-container').classList.add('hidden');
+    document.getElementById('prof-pass-input').value = '';
     
     viewProfUser.bgLink = extractImageUrl(document.getElementById('prof-bg-input').value);
     document.getElementById('prof-bg-input').classList.add('hidden');
@@ -1180,12 +1623,86 @@ function saveProfile() {
     if(currentTab === 'pm-chat') renderPMChat();
 }
 
+
+/* ======================== 
+     ROLE MANAGEMENT
+======================== */
+function renderRolesAdmin() {
+    const tb = document.getElementById('roles-tbody');
+    tb.innerHTML = Object.keys(customRoles).map(k => {
+        let r = customRoles[k];
+        return `
+        <tr class="border-b border-gray-700/50 hover:bg-gray-800">
+            <td class="p-3 font-bold">${k}</td>
+            <td class="p-3">${r.icon}</td>
+            <td class="p-3">${r.colorCls}</td>
+            <td class="p-3 text-xs">${r.perms ? r.perms.join(', ') : ''}</td>
+            <td class="p-3">
+               ${ (k === 'Admin' || k === 'Dev' || k === 'Member') ? 
+               '<span class="text-xs text-orange-400">System Role</span>' : 
+               `<button onclick="editRole('${k}')" class="text-sky-400 hover:text-sky-300 mr-2"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteRole('${k}')" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>` }
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function saveNewRole() {
+    let name = document.getElementById('role-name-input').value.trim();
+    let icon = document.getElementById('role-icon-input').value.trim();
+    let color = document.getElementById('role-color-input').value.trim() || 'text-sky-400';
+    let perms = document.getElementById('role-perms-input').value.trim().split(',').map(s=>s.trim()).filter(Boolean);
+    
+    if(!name || !icon) return alert("Sertakan Role & Icon!");
+    
+    let bgCol = color.replace('text-', 'bg-').split('-')[0] + '-900/20';
+    let borderCol = color.replace('text-', 'border-');
+    
+    customRoles[name] = {
+        text: name, icon: icon, colorCls: color,
+        badgeCls: `${borderCol} ${color} ${bgCol}`,
+        perms: perms
+    };
+    DB.set('customRoles', customRoles);
+    
+    document.getElementById('role-name-input').value = '';
+    document.getElementById('role-icon-input').value = '';
+    document.getElementById('role-color-input').value = '';
+    document.getElementById('role-perms-input').value = '';
+    renderRolesAdmin();
+    // Re-render chat and nav
+    initApp();
+}
+
+function editRole(name) {
+    let r = customRoles[name];
+    if(!r) return;
+    document.getElementById('role-name-input').value = name;
+    document.getElementById('role-icon-input').value = r.icon;
+    document.getElementById('role-color-input').value = r.colorCls;
+    document.getElementById('role-perms-input').value = r.perms ? r.perms.join(', ') : '';
+}
+
+function deleteRole(name) {
+    delete customRoles[name];
+    DB.set('customRoles', customRoles);
+    
+    // ubah user dgn role ini ke Member
+    Object.values(users).forEach(u => {
+        if(u.role === name) u.role = 'Member';
+    });
+    DB.set('users', users);
+    
+    renderRolesAdmin();
+    initApp();
+}
+
 /* ======================== 
      ADMIN & LOGS
 ======================== */
 const LOGO_FIELDS = {
     splash: 'Splash Screen', main: 'Logo Utama',
-    botGx: 'Game Bot (Gx)', botIde: 'Bot IDE', botCode: 'Bot Code', botOtak: 'Text Detect'
+    botGx: 'Game Bot (Gx)', botIde: 'Bot IDE', botCode: 'Bot Code', botOtak: 'Text Detect', botDetect: 'Detector AI'
 };
 
 function renderAdminLogos() {
@@ -1255,7 +1772,7 @@ function logAiMaster(str) {
     
     window.loadToggleAiState = function() {
         if(!settings.aiDisabled) settings.aiDisabled = {};
-        ['bot-gx', 'bot-ide', 'bot-code', 'bot-otak'].forEach(id => {
+        ['bot-gx', 'bot-ide', 'bot-code', 'bot-otak', 'ai-gen-cs', 'ai-correct-cs', 'bot-detect', 'bot-xycs', 'ai-pro'].forEach(id => {
             const el = document.getElementById('toggle-' + id);
             if(el) el.checked = !settings.aiDisabled[id];
         });
@@ -1263,41 +1780,59 @@ function logAiMaster(str) {
 
     window.devAction = function(act) {
         let tgt = document.getElementById('dev-target-user').value.trim();
+        let val = document.getElementById('dev-target-value').value.trim();
         if(!tgt || !users[tgt]) return alert("User tidak ditemukan di sistem!");
         if(act === 'inviteAdmin') { users[tgt].role = 'Admin'; alert('Berhasil jadi Admin'); }
-        if(act === 'kickAdmin') { users[tgt].role = 'Perisai'; alert('Berhasil kick Admin'); }
+        if(act === 'kickAdmin') { users[tgt].role = 'Member'; alert('Berhasil kick Admin'); }
         if(act === 'banUser') { users[tgt].banned = true; alert('Berhasil banned'); }
         if(act === 'unbanUser') { users[tgt].banned = false; alert('Berhasil unban'); }
-        if(act === 'resetPw') { let np = prompt("New PW:"); if(np) { users[tgt].password = np; alert('PW reset'); } }
+        if(act === 'resetPw') { 
+            if(!val) return alert("Masukkan password baru di kolom 'Nilai Baru'"); 
+            users[tgt].password = val; 
+            alert('PW reset ke: ' + val); 
+        }
         if(act === 'changeUname') { 
-            let nu = prompt("New Uname:"); 
-            if(nu && !users[nu]) { 
-                users[nu] = {...users[tgt], username: nu}; delete users[tgt]; alert('Username diubah'); 
-            } 
+            if(!val) return alert("Masukkan username baru di kolom 'Nilai Baru'"); 
+            if(users[val]) return alert("Username sudah dipakai!");
+            users[val] = {...users[tgt], username: val}; 
+            delete users[tgt]; 
+            alert('Username diubah menjadi: ' + val); 
         }
         DB.set('users', users);
-        logAiMaster("Action " + act + " performed on " + tgt);
+        logAiMaster("Action " + act + " performed on " + tgt + " (val: " + val + ")");
         renderLogs();
     };
     function deleteAccount(uname) {
-        if(!confirm("Yakin hapus akun "+uname+"?")) return;
+        if(!confirm("Hapus akun " + uname + "?")) return;
         delete users[uname];
         DB.set('users', users);
         renderLogs();
     }
+    let targetChangeRoleUname = null;
     function changeRole(uname) {
-    let newRole = prompt("Masukkan Role baru untuk " + uname + " (Contoh: Admin, Dev, Perisai, VIP, dll):", users[uname].role);
-    if(newRole === null) return;
-    newRole = newRole.trim() || 'Perisai';
-    users[uname].role = newRole;
-    DB.set('users', users);
-    renderLogs();
-    if(uname === currentUser.username) {
-        currentUser.role = newRole;
-        DB.set('currUser', currentUser);
-        initApp();
+        targetChangeRoleUname = uname;
+        document.getElementById('change-role-uname').innerText = uname;
+        let select = document.getElementById('change-role-select');
+        select.innerHTML = Object.keys(customRoles).map(r => `<option value="${r}">${r}</option>`).join('');
+        select.value = users[uname].role || 'Member';
+        document.getElementById('modal-change-role').classList.remove('hidden');
     }
-}
+    window.closeChangeRoleModal = function() {
+        document.getElementById('modal-change-role').classList.add('hidden');
+    };
+    window.saveChangedRole = function() {
+        if(!targetChangeRoleUname || !users[targetChangeRoleUname]) return;
+        let newRole = document.getElementById('change-role-select').value;
+        users[targetChangeRoleUname].role = newRole;
+        DB.set('users', users);
+        renderLogs();
+        if(targetChangeRoleUname === currentUser.username) {
+            currentUser.role = newRole;
+            DB.set('currUser', currentUser);
+            initApp();
+        }
+        closeChangeRoleModal();
+    };
 
 // ======== Dashboard ========
 function renderDashboard() {
@@ -1320,20 +1855,32 @@ function renderDashboard() {
 }
 
 // ======== CS Generation & Submission ========
-const GEMINI_API_KEY = "AIzaSyDhGzDkzRah36njrA9ZzEkgcBNBfgojDlU";
+const API_KEYS = {
+    correctCS: 'AIzaSyDWnpOdmcjIGMTOr65hSdhxobeS4iNpa1Y',
+    aiPro: 'AIzaSyBK6rKefvrtHE8OkU0BTUoZa1MlTMOCN4I',
+    botXyCs: 'AIzaSyBK6rKefvrtHE8OkU0BTUoZa1MlTMOCN4I',
+    botGx: 'AIzaSyBmpqta3DpiK-CfYeFKJw-9pCOFTx9D5-s',
+    botIde: 'AIzaSyBKOk5HEniiQw6QXaf3YziA3--tNNzS5TA',
+    botTeks: 'AIzaSyBKOk5HEniiQw6QXaf3YziA3--tNNzS5TA',
+    botCode: 'AIzaSyD90KZRVk8_ZF189yCnb2T0vbujzA1JbYM',
+    botAiDetect: 'AIzaSyD90KZRVk8_ZF189yCnb2T0vbujzA1JbYM',
+    detector: 'AIzaSyD90KZRVk8_ZF189yCnb2T0vbujzA1JbYM'
+};
 
-async function callAI(prompt) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+async function callGeneralAI(prompt, apiKey) {
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
     const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
     });
     const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
     return data.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal mendapatkan respon AI.";
 }
 
 async function generateCS() {
+    if(settings.aiDisabled && settings.aiDisabled['ai-gen-cs']) return alert("Fitur Generate CS sedang dimatikan oleh Developer.");
     let name = document.getElementById('cs-gen-name').value;
     let age = document.getElementById('cs-gen-age').value;
     let origin = document.getElementById('cs-gen-origin').value;
@@ -1352,7 +1899,7 @@ Masa Lalu: ${bg}
 
 SUDUT PANDANG KETIGA. BHS BAKI. 4 PARAGRAF, TIAP PARAGRAF 4 KALIMAT. JANGAN ADA TEKS PEMBUKA/PENUTUP.`;
     try {
-        let reply = await callAI(prompt);
+        let reply = await callGeneralAI(prompt, API_KEYS.correctCS);
         document.getElementById('cs-sub-text').value = reply;
         document.getElementById('cs-sub-name').value = name;
         document.getElementById('cs-sub-age').value = age;
@@ -1361,6 +1908,7 @@ SUDUT PANDANG KETIGA. BHS BAKI. 4 PARAGRAF, TIAP PARAGRAF 4 KALIMAT. JANGAN ADA 
 }
 
 async function correctCS() {
+    if(settings.aiDisabled && settings.aiDisabled['ai-correct-cs']) return alert("Fitur Koreksi CS sedang dimatikan oleh Developer.");
     let text = document.getElementById('cs-sub-text').value;
     let name = document.getElementById('cs-sub-name').value;
     if(!text || !name) return alert('Name & text required');
@@ -1375,12 +1923,13 @@ async function correctCS() {
 }
 
 async function detectCS() {
+        if(settings.aiDisabled && settings.aiDisabled['bot-detect']) return alert("Fitur Deteksi CS sedang dimatikan oleh Developer.");
         let text = document.getElementById('cs-sub-text').value;
         if(!text) return alert('Tuliskan teks CS-nya dulu');
         document.getElementById('cs-sub-status').innerText = 'Mendeteksi Human/AI...';
         document.getElementById('cs-sub-status').classList.remove('hidden');
         try {
-            let reply = await callAI("Apakah teks berikut dibuat oleh AI atau manusia? Beri analisis singkat (maks 2 kalimat): \n" + text);
+            let reply = await callGeneralAI("Apakah teks berikut dibuat oleh AI atau manusia? Beri analisis singkat (maks 2 kalimat): \n" + text, API_KEYS.botAiDetect); // teks berikut dibuat oleh AI atau manusia? Beri analisis singkat (maks 2 kalimat): \n" + text);
             alert("Hasil Deteksi Teks:\n" + reply);
         } catch(e) { alert("Error AI Detector"); }
         document.getElementById('cs-sub-status').innerText = 'Menghubungi AI...';
@@ -1496,8 +2045,8 @@ function actionAsk(id) {
 // ======== AI Pro ========
 function renderAiPro() {
     let c = document.getElementById('aipro-msg-container');
-    if(aiproChat.length > 0) {
-        c.innerHTML = aiproChat.map(m => renderHtmlMsg(m, 'aipro')).join('');
+    if((aiproChat[currentUser.username] || []).length > 0) {
+        c.innerHTML = (aiproChat[currentUser.username] || []).map(m => renderHtmlMsg(m, 'aipro')).join('');
         c.scrollTop = c.scrollHeight;
     } else {
         c.innerHTML = `
@@ -1509,24 +2058,124 @@ function renderAiPro() {
     }
 }
 async function sendAiPro() {
+    if(settings.aiDisabled && settings.aiDisabled['ai-pro']) return alert("Fitur AI Pro sedang dimatikan oleh Developer.");
     let i = document.getElementById('aipro-input');
     let text = i.value.trim();
     if(!text) return;
+    
+    if(text.startsWith('/clear')) {
+        let parts = text.split(' ');
+        if (parts.length > 1 && !isNaN(parts[1])) {
+            let n = parseInt(parts[1]);
+            if (n > 0) aiproChat[currentUser.username] = (aiproChat[currentUser.username]||[]).slice(0, Math.max(0, (aiproChat[currentUser.username] || []).length - n));
+        } else {
+            aiproChat[currentUser.username] = [];
+        }
+        DB.set('aipro', aiproChat);
+        i.value = ''; i.style.height = '48px';
+        renderAiPro();
+        return;
+    }
+
     i.value = '';
     i.style.height = '48px';
     
-    aiproChat.push({ id: 'msg_'+Date.now(), sender: currentUser.username, isBot: false, text, ts: Date.now() });
+    if(!aiproChat[currentUser.username]) aiproChat[currentUser.username] = [];
+    aiproChat[currentUser.username].push({ id: 'msg_'+Date.now(), sender: currentUser.username, isBot: false, text, ts: Date.now() });
     renderAiPro();
 
     try {
-        let reply = await callAI("SYSTEM: Expert Developer. Jawab detail, cerdas, tidak berbasa-basi.\n\n" + text);
-        aiproChat.push({ id: 'msg_'+Date.now(), sender: 'bot-aipro', isBot: true, text: reply, ts: Date.now() });
+        let reply = await callGeneralAI("SYSTEM: Expert Developer. Jawab detail, cerdas, tidak berbasa-basi.\n\n" + text, API_KEYS.aiPro);
+        if(!aiproChat[currentUser.username]) aiproChat[currentUser.username] = [];
+        aiproChat[currentUser.username].push({ id: 'msg_'+Date.now(), sender: 'bot-aipro', isBot: true, text: reply, ts: Date.now() });
     } catch(e) {
-        aiproChat.push({ id: 'msg_'+Date.now(), sender: 'bot-aipro', isBot: true, text: 'Error connecting to AI Pro.', ts: Date.now() });
+        if(!aiproChat[currentUser.username]) aiproChat[currentUser.username] = [];
+        aiproChat[currentUser.username].push({ id: 'msg_'+Date.now(), sender: 'bot-aipro', isBot: true, text: 'Error connecting to AI Pro.', ts: Date.now() });
     }
     DB.set('aipro', aiproChat);
     renderAiPro();
 }
+
+
+/* ======================== 
+     MENTION AUTOCOMPLETE
+======================== */
+let mentionTargetInput = null;
+let mentionCurrentQuery = "";
+
+function findMentionQuery(val, cursor) {
+    let untilCursor = val.substring(0, cursor);
+    let match = untilCursor.match(/@(\w*)$/);
+    if(match) return match[1];
+    return null;
+}
+
+function handleInputForMention(e) {
+    let input = e.target;
+    let val = input.value;
+    let cursor = input.selectionStart;
+    let query = findMentionQuery(val, cursor);
+    
+    const popup = document.getElementById('mention-popup');
+    
+    if(query !== null) {
+        // Include default bots
+        let bots = ["BotGx", "BotIDE", "BotCode", "BotXyCs", "BotDetect", "BotAiPro"];
+        
+        let allNames = input.id === 'pm-input' ? ["BotXyCs"] : Object.keys(users).concat(bots);
+        allNames = [...new Set(allNames)];
+        
+        let filtered = allNames.filter(n => n.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+        if(filtered.length > 0) {
+            mentionTargetInput = input;
+            mentionCurrentQuery = query;
+            
+            let rect = input.getBoundingClientRect();
+            popup.style.left = rect.left + 'px';
+            popup.style.bottom = (window.innerHeight - rect.top + 5) + 'px'; // float above input
+            
+            popup.innerHTML = filtered.map(name => {
+                let isBot = name.toLowerCase().includes('bot');
+                let icon = isBot ? '🤖' : '👤';
+                return `<div class="mention-item p-2 hover:bg-sky-700 cursor-pointer text-sm text-white flex items-center gap-2 border-b border-gray-700/50" onclick="insertMention('${name}')">${icon} ${name}</div>`;
+            }).join('');
+            
+            popup.classList.remove('hidden');
+        } else {
+            popup.classList.add('hidden');
+            mentionTargetInput = null;
+        }
+    } else {
+        popup.classList.add('hidden');
+        mentionTargetInput = null;
+    }
+}
+
+window.insertMention = function(name) {
+    if(!mentionTargetInput) return;
+    let val = mentionTargetInput.value;
+    let cursor = mentionTargetInput.selectionStart;
+    
+    // find index of @ before cursor
+    let untilCursor = val.substring(0, cursor);
+    let lastAt = untilCursor.lastIndexOf('@');
+    
+    let beforeAt = val.substring(0, lastAt);
+    let afterCursor = val.substring(cursor);
+    
+    mentionTargetInput.value = beforeAt + '@' + name + ' ' + afterCursor;
+    mentionTargetInput.focus();
+    
+    document.getElementById('mention-popup').classList.add('hidden');
+    mentionTargetInput = null;
+};
+
+document.addEventListener('click', (e) => {
+    if(!e.target.closest('#mention-popup') && !e.target.closest('textarea')) {
+        document.getElementById('mention-popup').classList.add('hidden');
+    }
+});
+
 
 // ======== Admin Settings ========
 function saveBg() {
@@ -1561,5 +2210,25 @@ document.getElementById('admin-rules-text').value = settings.rules || '';
      document.getElementById('admin-info-text').value = settings.infoWeb || '';
 
 </script>
+<!-- Image Preview Modal -->
+<div id="modal-image-preview" class="hidden fixed inset-0 z-[99999] bg-black/90 flex flex-col justify-center items-center backdrop-blur-sm p-4">
+    <div class="relative w-full h-full flex justify-center items-center">
+        <button onclick="document.getElementById('modal-image-preview').classList.add('hidden')" class="absolute top-4 right-4 text-white hover:text-red-500 font-bold text-4xl bg-black/50 rounded-full w-12 h-12 flex items-center justify-center">&times;</button>
+        <img id="image-preview-content" class="max-w-full max-h-[90vh] object-contain rounded shadow-2xl border border-gray-700">
+    </div>
+</div>
+
+<!-- Bot History Modal -->
+<div id="modal-bot-history" class="hidden fixed inset-0 z-[80] bg-black/70 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-xl p-5 w-full max-w-md border border-gray-600 max-h-[80vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg text-white"><i class="fas fa-history text-sky-400"></i> Riwayat Chat</h3>
+            <button class="text-gray-400 hover:text-white" onclick="closeBotSessionsModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <button onclick="newBotChat(); closeBotSessionsModal()" class="w-full bg-sky-600 hover:bg-sky-500 text-white p-3 rounded-lg mb-4 font-bold flex items-center justify-center gap-2"><i class="fas fa-plus"></i> Chat Baru</button>
+        <div id="bot-history-list" class="flex-1 overflow-y-auto custom-scroll pr-2"></div>
+    </div>
+</div>
+<div id="mention-popup" class="hidden fixed z-[9999] bg-gray-800 border border-gray-600 rounded-lg shadow-2xl overflow-y-auto max-h-48 min-w-[200px] flex flex-col"></div>
 </body>
 </html>
