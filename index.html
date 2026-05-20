@@ -1868,15 +1868,17 @@ const API_KEYS = {
 };
 
 async function callGeneralAI(prompt, apiKey) {
-    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + apiKey;
-    const res = await fetch(url, {
+    const res = await fetch("/api/general-ai", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        body: JSON.stringify({ prompt: prompt })
     });
+    if(!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Gagal terhubung ke AI server.");
+    }
     const data = await res.json();
-    if(data.error) throw new Error(data.error.message);
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal mendapatkan respon AI.";
+    return data.reply;
 }
 
 async function generateCS() {
@@ -1916,7 +1918,7 @@ async function correctCS() {
     
     let prompt = `Koreksi CS SAMP ini menjadi sudut pandang ketiga (nama: ${name}), perbaiki typo, kapitalisasi, dan format jadi min 4 paragraf, tiap paragraf min 4 kalimat.\nPatuhi server rules ini saat mengoreksi: ${settings.rules}\nJika cerita terlalu AI/robot, ubah agar natural. Jika mengandung hal dilarang rules, perbaiki. Hanya kirimkan teks hasilnya:\n\n${text}`;
     try {
-        let reply = await callAI(prompt);
+        let reply = await callGeneralAI(prompt, API_KEYS.correctCS);
         document.getElementById('cs-sub-text').value = reply;
     } catch(e) { alert('Error: '+e); }
     document.getElementById('cs-sub-status').classList.add('hidden');
